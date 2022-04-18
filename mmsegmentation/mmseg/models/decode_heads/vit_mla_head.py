@@ -5,7 +5,6 @@ from functools import partial
 import math
 
 from .helpers import load_pretrained
-from .layers import DropPath, to_2tuple, trunc_normal_
 
 from ..builder import HEADS
 from .decode_head import BaseDecodeHead
