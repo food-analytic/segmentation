@@ -175,8 +175,7 @@ class SeMaskMaskFormer(nn.Module):
 
         if self.training:
             # mask classification target
-            print(batched_inputs)
-            print(batched_inputs[0])
+            
             if "instances" in batched_inputs[0]:
                 gt_instances = [x["instances"].to(self.device) for x in batched_inputs]
                 if "sem_seg" in batched_inputs[0]:
@@ -186,7 +185,6 @@ class SeMaskMaskFormer(nn.Module):
                 targets = None
 
             # bipartite matching-based loss
-            print(targets)
             losses = self.criterion(outputs, cls_outputs, targets)
 
             for k in list(losses.keys()):
