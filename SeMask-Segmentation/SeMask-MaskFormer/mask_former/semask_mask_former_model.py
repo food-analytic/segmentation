@@ -184,6 +184,7 @@ class SeMaskMaskFormer(nn.Module):
                 targets = None
 
             # bipartite matching-based loss
+            print(targets)
             losses = self.criterion(outputs, cls_outputs, targets)
 
             for k in list(losses.keys()):
