@@ -411,7 +411,7 @@ class SegmentationVisualization():
     # randomly predict
     if random_n != 0:
       for i in range(random_n):
-        idx = np.random.randint(0, len(dataset_test))
+        idx = np.random.randint(0, len(self.segmenter.dataset_test))
         self.predictAndVisualize(idx, self.segmenter.dataset_test[idx][self.evaluation_img_type], self.segmenter.dataset_test[idx]['mask_np'],filter_small_classes)
     # predict some specific image
     elif len(indices) != 0:
@@ -419,7 +419,7 @@ class SegmentationVisualization():
         self.predictAndVisualize(i, self.segmenter.dataset_test[i][self.evaluation_img_type], self.segmenter.dataset_test[i]['mask_np'],filter_small_classes)
     # predict all
     else:
-      for i in range(len(dataset_test)):
+      for i in range(len(self.segmenter.dataset_test)):
         self.predictAndVisualize(i, self.segmenter.dataset_test[i][self.evaluation_img_type], self.segmenter.dataset_test[i]['mask_np'],filter_small_classes)
     
   
