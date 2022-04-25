@@ -1,28 +1,5 @@
 import numpy as np
 from PIL import Image
-def confusion_matrix_decorator(func):
-    def inner(*args, **kwargs):
-        segmenter = args[0].segmenter
-        x = segmenter.evaluation.confusionMatrix
-        if x is None:
-          print(f"no confusion matrix found, function {func.__name__} not available")
-          return
-        func(*args, **kwargs)
-    return inner
-  
-def accuracies_decorator(func):
-  def inner(*args, **kwargs):
-    segmenter = args[0].segmenter
-    try:
-      x = segmenter.evaluation.accuracies
-      if x is None:
-        print(f"no accuracies array found, function {func.__name__} not available")
-        return
-    except:
-        print(f"no accuracies array found, function {func.__name__} not available")
-        return
-    func(*args, **kwargs)
-  return inner
 
 class SegmentationVisualization():
   def __init__(self, model):
