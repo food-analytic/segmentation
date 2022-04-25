@@ -24,7 +24,7 @@ model = dict(
         img_size=768,
         mla_channels=256,
         mlahead_channels=128,
-        num_classes=74,
+        num_classes=104,
         norm_cfg=dict(type='BN', requires_grad=True),
         align_corners=False,
         loss_decode=dict(
@@ -36,7 +36,7 @@ model = dict(
             channels=512,
             in_index=0,
             img_size=768,
-            num_classes=74,
+            num_classes=104,
             align_corners=False,
             loss_decode=dict(
                 type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
@@ -46,7 +46,7 @@ model = dict(
             channels=512,
             in_index=1,
             img_size=768,
-            num_classes=74,
+            num_classes=104,
             align_corners=False,
             loss_decode=dict(
                 type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
@@ -56,7 +56,7 @@ model = dict(
             channels=512,
             in_index=2,
             img_size=768,
-            num_classes=74,
+            num_classes=104,
             align_corners=False,
             loss_decode=dict(
                 type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
@@ -66,7 +66,7 @@ model = dict(
             channels=512,
             in_index=3,
             img_size=768,
-            num_classes=74,
+            num_classes=104,
             align_corners=False,
             loss_decode=dict(
                 type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4))
