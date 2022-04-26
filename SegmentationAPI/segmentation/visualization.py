@@ -1,5 +1,7 @@
 import numpy as np
 from PIL import Image
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches 
 
 class SegmentationVisualization():
   def __init__(self, model):
@@ -15,95 +17,38 @@ class SegmentationVisualization():
       palettes += palette
     return palettes
 
-  def predictAndVisualize(self, idx, real_img, real_mask, filter_small_classes=False):
-    self.segmenter.model.eval()
-    if real_mask is not None:
-      img = real_img
-      mask = np.array(real_mask)
-      predicted = self.segmenter.predict(img, filter_small_classes=filter_small_classes)
-      if type(img) == str:
-        img = np.array(Image.open(img))
-      accuracy = self.segmenter.calculateIOU(predicted, mask)
-      f, axarr = plt.subplots(1,3, figsize=(20,6))
-      plt.subplots_adjust(wspace=0.4)
-      f.suptitle(f"image No.{idx} IOU: {accuracy}",fontsize=16)
+  def getVisualization(self, prediction, base64=False):
+    predicted = np.array(prediction).astype(np.uint8)
+    fig = plt.figure(figsize=(10,6))
 
-      predicted_labels = list(np.unique(predicted))
-      predicted_labels.sort(key=lambda x: np.count_nonzero(predicted == x), reverse=True)
-      predicted_labels_color = [self.palettes[label*3:label*3+3] for label in predicted_labels]
-      # print(predicted_labels)
-      # print(predicted_labels_color)
-      # print(predicted.shape)
+    predicted_labels = list(np.unique(predicted))
+    predicted_labels.sort(key=lambda x: np.count_nonzero(predicted == x), reverse=True)
+    predicted_labels_color = [self.palettes[label*3:label*3+3] for label in predicted_labels]
 
-      predicted = Image.fromarray(predicted)
-      predicted.putpalette(self.palettes)
-      predicted = predicted.convert('RGBA')
-
-      mask_labels = list(np.unique(mask))
-      mask_labels.sort(key=lambda x: np.count_nonzero(mask == x), reverse=True)
-      mask_labels_color = [self.palettes[label*3:label*3+3] for label in mask_labels]
-      #print(mask_labels)
-      #print(mask_labels_color)
-
-      mask = Image.fromarray(mask, mode='L')
-      mask.putpalette(self.palettes)
-      mask = mask.convert('RGBA')
-
-      axarr[0].imshow(img)
-      axarr[0].title.set_text('test image')
-      box = axarr[0].get_position()
-      axarr[0].set_position([box.x0, box.y0, box.width * 0.8, box.height])
-      axarr[1].imshow(mask)
-      axarr[1].title.set_text('ground truth')
-      real_patches = []
-      for idx, color in enumerate(mask_labels_color):
-        color = list(np.array(color)/255)
-        patch = mpatches.Patch(color=color, label=self.segmenter.model.config.id2label[mask_labels[idx]])
-        real_patches.append(patch)
-      box = axarr[1].get_position()
-      axarr[1].set_position([box.x0, box.y0, box.width * 0.8, box.height])
-      axarr[1].legend(handles=real_patches,loc='center left', bbox_to_anchor=(1, 0.5))
-
-      axarr[2].imshow(predicted, cmap='gray')
-      axarr[2].title.set_text('prediction')
-      predicted_patches = []
-      for idx, color in enumerate(predicted_labels_color):
-        color = list(np.array(color)/255)
-        patch = mpatches.Patch(color=color, label=self.segmenter.model.config.id2label[predicted_labels[idx]])
-        predicted_patches.append(patch)
-      box = axarr[2].get_position()
-      axarr[2].set_position([box.x0, box.y0, box.width * 0.8, box.height])
-      axarr[2].legend(handles=predicted_patches,loc='center left', bbox_to_anchor=(1, 0.5))
-      plt.show()
-      print()
+    predicted = Image.fromarray(predicted)
+    predicted.putpalette(self.palettes)
+    predicted = predicted.convert('RGBA')
+    predicted_patches = []
+    plt.imshow(predicted, cmap='gray')
+    #fig.imshow(predicted, cmap='gray')
+    plt.title('prediction', fontsize=30)
+    predicted_patches = []
+    for idx, color in enumerate(predicted_labels_color):
+      color = list(np.array(color)/255)
+      patch = mpatches.Patch(color=color, label=self.segmenter.model.config.id2label[predicted_labels[idx]])
+      predicted_patches.append(patch)
+    axis = fig.axes[0]
+    axis.xaxis.set_visible(False)
+    axis.yaxis.set_visible(False)
+    plt.gca().set_position([0.03, 0.05, 0.64, 0.90])
+    plt.legend(handles=predicted_patches,loc='center left', bbox_to_anchor=(1, 0.5), prop={'size': 20})
+    if not base64:
+      return fig
     else:
-      img = real_img
-      predicted = self.segmenter.predict(img,filter_small_classes=filter_small_classes)
-      f, axarr = plt.subplots(1,2, figsize=(10,6))
-      plt.subplots_adjust(wspace=0.4)
-
-      predicted_labels = list(np.unique(predicted))
-      predicted_labels.sort(key=lambda x: np.count_nonzero(predicted == x), reverse=True)
-      predicted_labels_color = [self.palettes[label*3:label*3+3] for label in predicted_labels]
-      
-      axarr[0].imshow(img)
-      axarr[0].title.set_text('input image')
-      box = axarr[0].get_position()
-      axarr[0].set_position([box.x0, box.y0, box.width * 0.8, box.height])
-
-      predicted = Image.fromarray(predicted)
-      predicted.putpalette(self.palettes)
-      predicted = predicted.convert('RGBA')
-      predicted_patches = []
-      axarr[1].imshow(predicted, cmap='gray')
-      axarr[1].title.set_text('prediction')
-      predicted_patches = []
-      for idx, color in enumerate(predicted_labels_color):
-        color = list(np.array(color)/255)
-        patch = mpatches.Patch(color=color, label=self.segmenter.model.config.id2label[predicted_labels[idx]])
-        predicted_patches.append(patch)
-      box = axarr[1].get_position()
-      axarr[1].set_position([box.x0, box.y0, box.width * 0.8, box.height])
-      axarr[1].legend(handles=predicted_patches,loc='center left', bbox_to_anchor=(1, 0.5))
-      plt.show()
-      print()
+      import io
+      import base64
+      IOBytes = io.BytesIO()
+      plt.savefig(IOBytes, format='png')
+      IOBytes.seek(0)
+      base64Image = base64.encodebytes(IOBytes.getvalue()).decode('ascii')
+      return base64Image
