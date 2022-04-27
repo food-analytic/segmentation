@@ -26,4 +26,4 @@ These are the models which performed outstandingly on famous segmentation datase
 - Swin Transformer (B)
 
 The performances of the models are depicted below.
-<img src="./demo/imgs/performance.png">
+<img src="./demo/imgs/performance.jpg">
