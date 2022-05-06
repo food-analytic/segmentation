@@ -13,5 +13,3 @@ pip install -r requirements.txt
 ```
 python api.py
 ```
-
-#### copy the SETR_MLA folder and place in segmentation folder as setr_mla in the root directory of the repository.
